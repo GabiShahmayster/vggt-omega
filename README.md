@@ -90,17 +90,19 @@ Install the demo dependencies:
 pip install -r requirements_demo.txt
 ```
 
-Launch the Gradio demo with a local checkpoint path:
+Run the rerun demo with a local checkpoint path and a folder of images:
 
 ```bash
-python demo_gradio.py \
+python demo_rerun.py path/to/image_folder \
   --checkpoint checkpoints/VGGT-Omega-1B-512/model.pt \
   --image-resolution 512
 ```
 
-The demo accepts uploaded images or a video, runs camera and depth inference,
-and visualizes the depth-unprojected point cloud and predicted cameras as a GLB
-scene.
+This runs camera and depth inference and opens the depth-unprojected point
+cloud and predicted cameras in the [Rerun](https://rerun.io) viewer. Visualization
+options mirror the web demo's defaults and can be overridden via flags, e.g.
+`--conf-thres`, `--max-points-k`, `--no-show-cam`, `--mask-sky`,
+`--mask-black-bg`, `--mask-white-bg`.
 
 ## Runtime and GPU Memory
 

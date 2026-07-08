@@ -14,22 +14,14 @@ dependencies = [
     "einops",
     "safetensors",
     "opencv-python",
-    "gradio>=6.19.0",
     "requests>=2.34.2",
-    "trimesh>=4.12.2",
-    "matplotlib>=3.10.9",
-    "scipy>=1.15.3",
+    "rerun-sdk>=0.20.0",
+    "torch",
+    "torchvision",
 ]
 
 [project.optional-dependencies]
 demo = [
-    "gradio>=5.17.1",
-    "viser>=0.2.23",
-    "tqdm",
-    "scipy",
-    "trimesh",
-    "matplotlib",
-    "requests",
     "onnxruntime",
 ]
 export = [
