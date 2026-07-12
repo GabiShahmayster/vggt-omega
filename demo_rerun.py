@@ -189,6 +189,14 @@ def main():
     )
 
     rr.init("vggt-omega", spawn=True)
+    # VGGT world/camera coords are OpenCV-style (X-right, Y-down, Z-forward).
+    # Rotate -90deg about X so Y-down -> Z-up and Z-forward -> Y-horizontal,
+    # laying the scene flat on rerun's default (Z-up) ground grid.
+    rr.log(
+        "world",
+        rr.Transform3D(mat3x3=[[1, 0, 0], [0, 0, 1], [0, -1, 0]]),
+        static=True,
+    )
     log_to_rerun(
         predictions,
         conf_thres=args.conf_thres,
