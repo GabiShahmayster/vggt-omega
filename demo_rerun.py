@@ -30,12 +30,23 @@ def load_model(checkpoint_path: str) -> VGGTOmega:
     return model.to("cuda")
 
 
-def run_model(image_folder: str, model: VGGTOmega, image_resolution: int) -> dict:
+def run_model(
+    image_folder: str,
+    model: VGGTOmega,
+    image_resolution: int,
+    skip_frames: int = -1,
+    max_frames: int = -1,
+) -> dict:
     print(f"Processing images from {image_folder}")
 
     image_names = sorted(glob.glob(os.path.join(image_folder, "*")))
     if len(image_names) == 0:
         raise FileNotFoundError(f"No images found in {image_folder}")
+
+    if max_frames != -1:
+        image_names = image_names[:max_frames]
+    if skip_frames != -1:
+        image_names = image_names[::skip_frames]
 
     images = load_and_preprocess_images(image_names, image_resolution=image_resolution).to("cuda")
     print(f"Preprocessed images shape: {tuple(images.shape)}")
@@ -156,6 +167,8 @@ def parse_args():
     parser.add_argument("--image-resolution", type=int, default=512, help="Input image resolution. Default: 512.")
     parser.add_argument("--conf-thres", type=float, default=50.0, help="Confidence threshold percentile (0-100). Default: 50.")
     parser.add_argument("--max-points-k", type=int, default=1000, help="Max points to display, in thousands. Default: 1000.")
+    parser.add_argument("--skip-frames", type=int, default=-1, help="Retain only every n-th frame. Default: -1 (no effect).")
+    parser.add_argument("--max-frames", type=int, default=-1, help="Limit the number of loaded frames. Default: -1 (no effect).")
     parser.add_argument("--show-cam", action=argparse.BooleanOptionalAction, default=True, help="Show camera frustums.")
     parser.add_argument("--mask-sky", action=argparse.BooleanOptionalAction, default=False, help="Filter sky points.")
     parser.add_argument("--mask-black-bg", action=argparse.BooleanOptionalAction, default=False, help="Filter black background points.")
@@ -167,7 +180,13 @@ def main():
     args = parse_args()
     print(f"Loading checkpoint from {args.checkpoint}")
     model = load_model(args.checkpoint)
-    predictions = run_model(args.image_folder, model, args.image_resolution)
+    predictions = run_model(
+        args.image_folder,
+        model,
+        args.image_resolution,
+        skip_frames=args.skip_frames,
+        max_frames=args.max_frames,
+    )
 
     rr.init("vggt-omega", spawn=True)
     log_to_rerun(
